@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Loja Online</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff; /* Azul vibrante */
+            --secondary-color: #28a745; /* Verde para sucesso */
+            --text-color: #333;
+            --bg-light: #f8f9fa;
+        }
+
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            margin: 0; 
+            padding: 0;
+            background-color: var(--bg-light);
+            color: var(--text-color);
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .container { 
+            max-width: 1100px; 
+            margin: 40px auto; 
+            padding: 20px; 
+        }
+
+        h1 { 
+            font-weight: 700;
+            font-size: 2em;
+            margin: 0;
+        }
+
+        h2 { 
+            color: var(--text-color); 
+            border-bottom: 2px solid #ddd; 
+            padding-bottom: 5px; 
+            margin-top: 30px;
+            font-weight: 400;
+        }
+
+        /* Botões de Ação */
+        .action-container {
+            padding: 15px 0;
+        }
+        .action-button { 
+            display: inline-block; 
+            padding: 12px 20px; 
+            background-color: var(--secondary-color); 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .action-button:hover { 
+            background-color: #1e7e34; 
+        }
+
+        /* Estilo da Tabela */
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden; /* Para garantir bordas arredondadas */
+        }
+        th, td { 
+            padding: 12px 15px; 
+            text-align: left; 
+        }
+        th { 
+            background-color: var(--primary-color); 
+            color: white; 
+            font-weight: 400;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+        tr:nth-child(even) { /* Listras zebradas */
+            background-color: #f8f8f8;
+        }
+        tr:hover {
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Dashboard Loja Online</h1>
+        <p>Modelo de Classes POO - Persistência JSON</p>
+    </div>
+    
+    <div class="container">
+        <div class="action-container">
+            <a href="{{ url_for('cadastrar_cliente_web') }}" class="action-button">CADASTRAR NOVO CLIENTE</a>
+        </div>
+
+        <h2>Clientes Cadastrados (Teste Herança / Associação)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>Endereço</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cid, cliente in clientes %}
+                <tr>
+                    <td>{{ cid }}</td>
+                    <td>{{ cliente.nome }}</td>
+                    <td>{{ cliente.cpf }}</td>
+                    <td>{{ cliente.endereco }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Produtos Disponíveis</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome do Produto</th>
+                    <th>Preço</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pid, produto in produtos %}
+                <tr>
+                    <td>{{ pid }}</td>
+                    <td>{{ produto.nome }}</td>
+                    <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

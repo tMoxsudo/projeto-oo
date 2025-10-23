@@ -19,6 +19,11 @@
             "nome": "mexicano",
             "cpf": "8884585",
             "endereco": "ceilandia 3 da norte do lado da casa do caralho"
+        },
+        "5": {
+            "nome": "gustavo abilada ",
+            "cpf": "99999999999",
+            "endereco": "taguatinga, ponte "
         }
     },
     "produtos": {
@@ -33,7 +38,7 @@
     },
     "pedidos": {},
     "next_ids": {
-        "cliente": 5,
+        "cliente": 6,
         "pedido": 1
     }
 }
