@@ -1,0 +1,39 @@
+{
+    "clientes": {
+        "1": {
+            "nome": "Jo\u00e3o Silva",
+            "cpf": "000.111.222-33",
+            "endereco": "Rua Principal"
+        },
+        "2": {
+            "nome": "sauhan",
+            "cpf": "fereira ",
+            "endereco": "mello"
+        },
+        "3": {
+            "nome": "sauhan",
+            "cpf": "0083494395",
+            "endereco": "rua putaa que pariu na casa do krl"
+        },
+        "4": {
+            "nome": "mexicano",
+            "cpf": "8884585",
+            "endereco": "ceilandia 3 da norte do lado da casa do caralho"
+        }
+    },
+    "produtos": {
+        "101": {
+            "nome": "PC Gamer Z100",
+            "preco": 6500.0
+        },
+        "102": {
+            "nome": "Monitor Ultra",
+            "preco": 1200.0
+        }
+    },
+    "pedidos": {},
+    "next_ids": {
+        "cliente": 5,
+        "pedido": 1
+    }
+}
