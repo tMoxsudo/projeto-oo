@@ -7,8 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #007bff; /* Azul vibrante */
-            --secondary-color: #28a745; /* Verde para sucesso */
+            --primary-color: #007bff; /* Azul */
+            --secondary-color: #28a745; /* Verde */
+            --warning-color: #ffc107; /* Amarelo/Laranja */
             --text-color: #333;
             --bg-light: #f8f9fa;
         }
@@ -34,37 +35,30 @@
             padding: 20px; 
         }
 
-        h1 { 
-            font-weight: 700;
-            font-size: 2em;
-            margin: 0;
-        }
-
         h2 { 
             color: var(--text-color); 
             border-bottom: 2px solid #ddd; 
             padding-bottom: 5px; 
             margin-top: 30px;
-            font-weight: 400;
+            font-weight: 500;
         }
 
         /* Botões de Ação */
-        .action-container {
-            padding: 15px 0;
-        }
+        .action-container { padding: 15px 0; }
         .action-button { 
             display: inline-block; 
             padding: 12px 20px; 
-            background-color: var(--secondary-color); 
             color: white; 
             text-decoration: none; 
             border-radius: 8px; 
             font-weight: 500;
             transition: background-color 0.3s;
+            margin-right: 15px;
         }
-        .action-button:hover { 
-            background-color: #1e7e34; 
-        }
+        .btn-green { background-color: var(--secondary-color); }
+        .btn-green:hover { background-color: #1e7e34; }
+        .btn-yellow { background-color: var(--warning-color); color: #333; }
+        .btn-yellow:hover { background-color: #e0a800; }
 
         /* Estilo da Tabela */
         table { 
@@ -73,7 +67,7 @@
             background-color: white;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
             border-radius: 8px;
-            overflow: hidden; /* Para garantir bordas arredondadas */
+            overflow: hidden;
         }
         th, td { 
             padding: 12px 15px; 
@@ -86,12 +80,9 @@
             text-transform: uppercase;
             font-size: 0.9em;
         }
-        tr:nth-child(even) { /* Listras zebradas */
-            background-color: #f8f8f8;
-        }
-        tr:hover {
-            background-color: #e9ecef;
-        }
+        tr:nth-child(even) { background-color: #f8f8f8; }
+        .status-pago { color: var(--secondary-color); font-weight: bold; }
+        .status-aberto { color: red; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -102,10 +93,41 @@
     
     <div class="container">
         <div class="action-container">
-            <a href="{{ url_for('cadastrar_cliente_web') }}" class="action-button">CADASTRAR NOVO CLIENTE</a>
+            <a href="{{ url_for('cadastrar_cliente_web') }}" class="action-button btn-green">CADASTRAR NOVO CLIENTE</a>
+            <a href="{{ url_for('cadastrar_pedido_web') }}" class="action-button btn-yellow">CRIAR NOVO PEDIDO</a>
         </div>
 
-        <h2>Clientes Cadastrados (Teste Herança / Associação)</h2>
+        <h2>Pedidos Registrados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Pedido</th>
+                    <th>Cliente</th>
+                    <th>Nº de Itens</th>
+                    <th>Valor Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pid, pedido in pedidos %}
+                <tr>
+                    <td>{{ pid }}</td>
+                    <td>{{ pedido.cliente.nome }}</td>
+                    <td>{{ pedido.itens|length }}</td>
+                    <td>R$ {{ "%.2f"|format(pedido.calcular_total()) }}</td>
+                    <td>
+                        {% if pedido.pago %}
+                            <span class="status-pago">PAGO</span>
+                        {% else %}
+                            <span class="status-aberto">ABERTO</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Clientes Cadastrados</h2>
         <table>
             <thead>
                 <tr>

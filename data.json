@@ -24,6 +24,11 @@
             "nome": "gustavo abilada ",
             "cpf": "99999999999",
             "endereco": "taguatinga, ponte "
+        },
+        "6": {
+            "nome": "joao da silva melo",
+            "cpf": "999999999",
+            "endereco": "taguatinga norte, ql 37 casa 18"
         }
     },
     "produtos": {
@@ -38,7 +43,7 @@
     },
     "pedidos": {},
     "next_ids": {
-        "cliente": 6,
+        "cliente": 7,
         "pedido": 1
     }
 }

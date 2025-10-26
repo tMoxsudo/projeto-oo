@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Criar Pedido</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-color: #007bff; --warning-color: #ffc107; }
+        body { font-family: 'Roboto', sans-serif; margin: 0; padding: 40px; background-color: #f8f9fa; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 25px; font-weight: 500;}
+        label { display: block; margin-top: 15px; margin-bottom: 5px; font-weight: 500; font-size: 0.95em; }
+        select, input[type="number"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .product-item { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 10px; 
+            padding: 10px; 
+            border: 1px solid #f0f0f0; 
+            border-radius: 4px; 
+            background-color: #fff;
+        }
+        .product-item label { margin: 0; margin-right: 15px; font-weight: 400; flex-grow: 1; }
+        .product-item input[type="number"] { width: 80px; text-align: center; }
+        input[type="submit"] { 
+            background-color: var(--warning-color); 
+            color: #333; 
+            padding: 12px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin-top: 30px; 
+            font-weight: 500;
+        }
+        .back-link { display: block; margin-top: 15px; color: var(--primary-color); text-decoration: none; font-size: 0.9em; }
+        .info-header { font-size: 0.9em; color: #666; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Criar Novo Pedido</h2>
+        <p>Demonstração da **Associação** (Cliente) e **Composição** (Itens do Pedido).</p>
+
+        <form method="POST" action="{{ url_for('cadastrar_pedido_web') }}">
+            <label for="cliente_id">Cliente Associado (Associação):</label>
+            <select id="cliente_id" name="cliente_id" required style="width: 100%; padding: 10px;">
+                <option value="" disabled selected>-- Selecione um Cliente --</option>
+                {% for cid, cliente in clientes %}
+                    <option value="{{ cid }}">{{ cliente.nome }} (ID: {{ cid }})</option>
+                {% endfor %}
+            </select>
+
+            <label style="margin-top: 30px;">Itens do Pedido (Composição):</label>
+            <div class="info-header">Selecione a quantidade para incluir no pedido:</div>
+            {% for pid, produto in produtos %}
+                <div class="product-item">
+                    <label for="qty_{{ pid }}">{{ produto.nome }} (R$ {{ "%.2f"|format(produto.preco) }})</label>
+                    <input type="hidden" name="produto_id" value="{{ pid }}">
+                    <input type="number" id="qty_{{ pid }}" name="quantidade_{{ pid }}" min="0" value="0">
+                </div>
+            {% endfor %}
+
+            <input type="submit" value="Finalizar e Salvar Pedido">
+        </form>
+        
+        <a href="{{ url_for('index') }}" class="back-link">← Voltar para o Dashboard</a>
+    </div>
+</body>
+</html>     

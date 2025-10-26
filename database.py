@@ -8,7 +8,6 @@ import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__))) 
 
 # Importa as classes dos pacotes para a reconstrução dos objetos
-# Estas importações usam a notação de pacote (core.Cliente)
 from core.cliente import Cliente
 from core.produto import Produto
 from core.pedido import Pedido
@@ -17,7 +16,6 @@ from core.pedido import Pedido
 DB_FILE = 'data.json'
 
 # --- DADOS INICIAIS (Em formato JSON PURO - Dicionários) ---
-# Usar JSON puro evita o erro de tentar instanciar classes antes do tempo
 DADOS_INICIAIS = {
     'clientes': {
         '1': {'nome': "João Silva", 'cpf': "000.111.222-33", 'endereco': "Rua Principal"},
@@ -35,10 +33,8 @@ def carregar_dados_json():
     """
     Objetivo: Carregar dados do arquivo JSON e reconstruir os objetos Python.
     Função: Lida com a leitura do disco e chama o método estático 'from_json' 
-            de cada classe para recriar as instâncias. É responsável por garantir 
-            que a Associação (Cliente) e a Composição (Pedido/Itens) sejam restauradas.
+            de cada classe para recriar as instâncias.
     """
-    
     if not os.path.exists(DB_FILE):
         with open(DB_FILE, 'w') as f:
             json.dump(DADOS_INICIAIS, f, indent=4)
@@ -78,7 +74,6 @@ def salvar_dados_json(dados):
     Objetivo: Serializar os objetos Python para JSON e salvar no arquivo.
     Função: Chama o método 'to_json()' de cada objeto e salva o resultado.
     """
-    
     data_to_save = {
         'clientes': {cid: obj.to_json() for cid, obj in dados['clientes'].items()},
         'produtos': {pid: obj.to_json() for pid, obj in dados['produtos'].items()},
@@ -86,8 +81,5 @@ def salvar_dados_json(dados):
         'next_ids': dados['next_ids']
     }
     
-    try:
-        with open(DB_FILE, 'w') as f:
-            json.dump(data_to_save, f, indent=4)
-    except Exception as e:
-        print(f"ERRO CRÍTICO ao salvar dados: {e}")
+    with open(DB_FILE, 'w') as f:
+        json.dump(data_to_save, f, indent=4)
