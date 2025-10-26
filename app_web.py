@@ -1,47 +1,69 @@
-# Arquivo: app_web.py - Servidor Flask para a Interface Web
+# Arquivo: app_web.py - Servidor Flask (Controlador Web)
 
 from flask import Flask, render_template, request, redirect, url_for
-import database 
+import database # Importa o módulo de persistência (database.py)
+
+# Importa os modelos de domínio
 from core.cliente import Cliente
 from core.produto import Produto
 from core.pedido import Pedido 
+from pagamentos.pagamento_cartao import PagamentoCartao
+from pagamentos.pagamento_pix import PagamentoPix
 
-# 1. Configuração Inicial
-app = Flask(__name__, template_folder='templates') # Define o local dos templates
-DB = database.carregar_dados_json()
 
+# 1. Configuração Inicial do Flask
+app = Flask(__name__, template_folder='templates') 
+
+# Carrega o estado do sistema do JSON para a memória no início
+DB = database.carregar_dados_json() 
+
+# Associa a referência do dicionário de clientes ao objeto Cliente (necessário para serialização do Pedido)
+Cliente.db_ref = DB['clientes'] 
+
+
+# ----------------------------------------------------------------------
+# ROTAS DE VISUALIZAÇÃO E LISTAGEM
+# ----------------------------------------------------------------------
 
 @app.route('/')
 def index():
     """
-    Rota principal. Exibe a lista de todos os modelos persistidos.
+    Endpoint: index (Rota: /)
+    Objetivo: Rota principal. Carrega o estado atual dos modelos e renderiza o Dashboard.
     """
     clientes_data = DB['clientes'].items()
     produtos_data = DB['produtos'].items()
     pedidos_data = DB['pedidos'].items()
 
+    # Renderiza o template principal (Dashboard)
     return render_template(
-        'index.html',
+        'dashboard.html', # CHAMA O ARQUIVO CORRETO
         clientes=clientes_data,
         produtos=produtos_data,
         pedidos=pedidos_data
     )
 
 
+# ----------------------------------------------------------------------
+# ROTAS DE CRIAÇÃO E LÓGICA DE NEGÓCIO
+# ----------------------------------------------------------------------
+
 @app.route('/cadastrar_cliente', methods=['GET', 'POST'])
 def cadastrar_cliente_web():
     """
-    Rota para cadastrar um novo Cliente (Teste HERANÇA).
+    Endpoint: cadastrar_cliente_web (Rota: /cadastrar_cliente)
+    Demonstra: HERANÇA.
     """
     if request.method == 'POST':
+        # 1. Captura e Instanciação
         nome = request.form['nome']
         cpf = request.form['cpf']
         endereco = request.form['endereco']
         
-        # Instanciação e Herança (Lógica POO)
+        # Lógica POO (Herança)
         novo_cliente = Cliente(nome, cpf, endereco)
         
-        # Persistência
+        # 2. Persistência
         cliente_id = str(DB['next_ids']['cliente'])
         DB['clientes'][cliente_id] = novo_cliente
         DB['next_ids']['cliente'] += 1
@@ -49,14 +71,15 @@ def cadastrar_cliente_web():
         
         return redirect(url_for('index'))
     
+    # GET: Exibe o formulário
     return render_template('cadastro_cliente.html')
 
 
 @app.route('/cadastrar_pedido', methods=['GET', 'POST'])
 def cadastrar_pedido_web():
     """
-    Rota para cadastrar um novo Pedido. 
-    Demonstra a Associação (Cliente) e Composição (ItemPedido).
+    Endpoint: cadastrar_pedido_web (Rota: /cadastrar_pedido)
+    Demonstra: ASSOCIAÇÃO e COMPOSIÇÃO.
     """
     clientes_data = DB['clientes']
     produtos_data = DB['produtos']
@@ -64,19 +87,18 @@ def cadastrar_pedido_web():
     if request.method == 'POST':
         # 1. Captura e validação
         cliente_id = request.form.get('cliente_id')
-        produtos_ids = request.form.getlist('produto_id') 
+        produtos_ids = request.form.getlist('produto_id')
         
         cliente_obj = clientes_data.get(cliente_id)
 
         if not cliente_obj:
-            return "Erro: Cliente não encontrado.", 400
+            return render_template('error.html', message="Cliente não encontrado."), 400
 
-        novo_pedido = Pedido(cliente_obj) # ASSOCIAÇÃO: Referência ao objeto Cliente
+        novo_pedido = Pedido(cliente_obj) # ASSOCIAÇÃO
 
-        # 2. Adicionar Itens (Composição)
-        total_itens = 0
+        # 2. Processamento dos Itens (Composição)
+        total_itens_adicionados = 0
         for produto_id in produtos_ids:
-            # Pega a quantidade correta para o produto_id específico
             qtde_campo = f'quantidade_{produto_id}'
             try:
                 quantidade = int(request.form.get(qtde_campo, 0))
@@ -86,12 +108,11 @@ def cadastrar_pedido_web():
             produto_obj = produtos_data.get(produto_id)
             
             if produto_obj and quantidade > 0:
-                # COMPOSIÇÃO: ItemPedido criado e anexado ao Pedido
-                novo_pedido.adicionar_item(produto_obj, quantidade)
-                total_itens += 1
+                novo_pedido.adicionar_item(produto_obj, quantidade) # COMPOSIÇÃO
+                total_itens_adicionados += 1
 
-        if total_itens == 0:
-            return "Erro: O pedido deve ter pelo menos um item.", 400
+        if total_itens_adicionados == 0:
+            return render_template('error.html', message="O pedido deve ter pelo menos um item."), 400
 
         # 3. Persistência
         pedido_id = str(DB['next_ids']['pedido'])
@@ -101,7 +122,7 @@ def cadastrar_pedido_web():
         
         return redirect(url_for('index'))
 
-    # Se for GET, exibe o formulário
+    # GET: Exibe o formulário
     return render_template(
         'cadastro_pedido.html', 
         clientes=clientes_data.items(), 
@@ -111,4 +132,5 @@ def cadastrar_pedido_web():
 
 if __name__ == '__main__':
     # Para rodar, o terminal deve estar na raiz do PROJETO OO
+    # Execute: python3 app_web.py
     app.run(debug=True)

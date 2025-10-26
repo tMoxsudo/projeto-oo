@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Principal{% endblock %}
+
+{% block content %}
+<div class="p-5 text-center bg-image rounded-3" 
+    style="
+        background-image: url('https://images.unsplash.com/photo-1542435503-921c38096ff0?fit=crop&w=1200&h=300&q=80');
+        height: 300px;
+        background-size: cover;
+        background-position: center;
+        margin-bottom: 30px;
+    ">
+    <div class="mask h-100 w-100" style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="d-flex justify-content-center align-items-center h-100">
+            <div class="text-white">
+                <h1 class="mb-3 fw-bold">Bem-vindo(a) ao Sistema de Modelagem POO!</h1>
+                <h4 class="mb-3">Selecione uma opção no menu lateral para interagir com os modelos.</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex mb-4">
+    <a href="{{ url_for('cadastrar_cliente_web') }}" class="btn btn-success btn-lg me-3"><i class="fas fa-user-plus me-2"></i>Cadastrar Cliente (Herança)</a>
+    <a href="{{ url_for('cadastrar_pedido_web') }}" class="btn btn-warning btn-lg text-dark"><i class="fas fa-cart-plus me-2"></i>Criar Novo Pedido (Composição)</a>
+</div>
+
+<h2 class="section-title" id="pedidos-list">Pedidos Registrados</h2>
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-primary">
+            <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Itens</th>
+                <th>Valor Total</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pid, pedido in pedidos %}
+            <tr>
+                <td>{{ pid }}</td>
+                <td>{{ pedido.cliente.nome }}</td>
+                <td>{{ pedido.itens|length }}</td>
+                <td>R$ {{ "%.2f"|format(pedido.calcular_total()) }}</td>
+                <td>
+                    {% if pedido.pago %}
+                        <span class="badge bg-success">PAGO</span>
+                    {% else %}
+                        <span class="badge bg-danger">ABERTO</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h2 class="section-title" id="clientes-list">Clientes Cadastrados</h2>
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-primary">
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Endereço</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cid, cliente in clientes %}
+            <tr>
+                <td>{{ cid }}</td>
+                <td>{{ cliente.nome }}</td>
+                <td>{{ cliente.cpf }}</td>
+                <td>{{ cliente.endereco }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h2 class="section-title">Produtos Disponíveis</h2>
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-primary">
+            <tr>
+                <th>ID</th>
+                <th>Nome do Produto</th>
+                <th>Preço</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pid, produto in produtos %}
+            <tr>
+                <td>{{ pid }}</td>
+                <td>{{ produto.nome }}</td>
+                <td>R$ {{ "%.2f"|format(produto.preco) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
